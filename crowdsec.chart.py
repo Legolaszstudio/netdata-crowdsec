@@ -96,88 +96,88 @@ class Service(ExecutableService):
             raw = self._get_raw_data()
             raw = (''.join(raw)).replace("\n", "")
             parsed_json = loads(raw)
+            if parsed_json != None:    
+                for event in parsed_json:
+                    # By ip
+                    dimension_key = event['source']['ip']
+                    prefixed_dimension_key = f"decisions_ip_{dimension_key}"
+                    self.create_chart(
+                        "decisions_IP",
+                        [[
+                            prefixed_dimension_key,
+                            dimension_key
+                        ]],
+                        "Active Decisions by ip",
+                        "ip",
+                        "Decisions",
+                        "crowdsec.decisions_IP",
+                        chart_type='stacked'
+                    )
+                    if prefixed_dimension_key in data:
+                        data[prefixed_dimension_key] += 1
+                    else:
+                        data[prefixed_dimension_key] = 1
 
-            for event in parsed_json:
-                # By ip
-                dimension_key = event['source']['ip']
-                prefixed_dimension_key = f"decisions_ip_{dimension_key}"
-                self.create_chart(
-                    "decisions_IP",
-                    [[
-                        prefixed_dimension_key,
-                        dimension_key
-                    ]],
-                    "Active Decisions by ip",
-                    "ip",
-                    "Decisions",
-                    "crowdsec.decisions_IP",
-                    chart_type='stacked'
-                )
-                if prefixed_dimension_key in data:
-                    data[prefixed_dimension_key] += 1
-                else:
-                    data[prefixed_dimension_key] = 1
+                    # By AS
+                    dimension_key = event['source']['as_name'] + \
+                        " - " + event['source']['as_number']
+                    prefixed_dimension_key = f"decisions_ip_{dimension_key.replace(' - ', '_')}"
+                    self.create_chart(
+                        "decisions_AS",
+                        [[
+                            prefixed_dimension_key,
+                            dimension_key
+                        ]],
+                        "Active Decisions by AS",
+                        "AS",
+                        "Decisions",
+                        "crowdsec.decisions_AS",
+                        chart_type='stacked'
+                    )
+                    if prefixed_dimension_key in data:
+                        data[prefixed_dimension_key] += 1
+                    else:
+                        data[prefixed_dimension_key] = 1
 
-                # By AS
-                dimension_key = event['source']['as_name'] + \
-                    " - " + event['source']['as_number']
-                prefixed_dimension_key = f"decisions_ip_{dimension_key.replace(' - ', '_')}"
-                self.create_chart(
-                    "decisions_AS",
-                    [[
-                        prefixed_dimension_key,
-                        dimension_key
-                    ]],
-                    "Active Decisions by AS",
-                    "AS",
-                    "Decisions",
-                    "crowdsec.decisions_AS",
-                    chart_type='stacked'
-                )
-                if prefixed_dimension_key in data:
-                    data[prefixed_dimension_key] += 1
-                else:
-                    data[prefixed_dimension_key] = 1
+                    # By Country
+                    dimension_key = event['source']['cn']
+                    prefixed_dimension_key = f"decisions_ip_{dimension_key}"
+                    self.create_chart(
+                        "decisions_country",
+                        [[
+                            prefixed_dimension_key,
+                            dimension_key
+                        ]],
+                        "Active Decisions by Country",
+                        "Country",
+                        "Decisions",
+                        "crowdsec.decisions_country",
+                        chart_type='stacked'
+                    )
+                    if prefixed_dimension_key in data:
+                        data[prefixed_dimension_key] += 1
+                    else:
+                        data[prefixed_dimension_key] = 1
 
-                # By Country
-                dimension_key = event['source']['cn']
-                prefixed_dimension_key = f"decisions_ip_{dimension_key}"
-                self.create_chart(
-                    "decisions_country",
-                    [[
-                        prefixed_dimension_key,
-                        dimension_key
-                    ]],
-                    "Active Decisions by Country",
-                    "Country",
-                    "Decisions",
-                    "crowdsec.decisions_country",
-                    chart_type='stacked'
-                )
-                if prefixed_dimension_key in data:
-                    data[prefixed_dimension_key] += 1
-                else:
-                    data[prefixed_dimension_key] = 1
-
-                # By Scenario
-                dimension_key = event['scenario']
-                prefixed_dimension_key = f"decisions_ip_{self.remove_special(dimension_key)}"
-                self.create_chart(
-                    "decisions_scenario",
-                    [[
-                        prefixed_dimension_key,
-                        dimension_key
-                    ]],
-                    "Active Decisions by Scenario",
-                    "scenario",
-                    "Decisions",
-                    "crowdsec.decisions_scenario",
-                    chart_type='stacked'
-                )
-                if prefixed_dimension_key in data:
-                    data[prefixed_dimension_key] += 1
-                else:
-                    data[prefixed_dimension_key] = 1
+                    # By Scenario
+                    dimension_key = event['scenario']
+                    prefixed_dimension_key = f"decisions_ip_{self.remove_special(dimension_key)}"
+                    self.create_chart(
+                        "decisions_scenario",
+                        [[
+                            prefixed_dimension_key,
+                            dimension_key
+                        ]],
+                        "Active Decisions by Scenario",
+                        "scenario",
+                        "Decisions",
+                        "crowdsec.decisions_scenario",
+                        chart_type='stacked'
+                    )
+                    if prefixed_dimension_key in data:
+                        data[prefixed_dimension_key] += 1
+                    else:
+                        data[prefixed_dimension_key] = 1
 
         # Get data from metrics
         self.command = METRICS_CMD
