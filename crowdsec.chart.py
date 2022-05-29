@@ -212,6 +212,7 @@ class Service(ExecutableService):
 
         for i in range(len(parsed_json)):
             current = parsed_json[i]
+            if current == None: continue
             if i == 0 and self.acquisition_enabled:
                 # File acquisition
                 for item_key in current:
