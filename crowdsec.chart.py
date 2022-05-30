@@ -89,14 +89,14 @@ class Service(ExecutableService):
 
     def get_data(self):
         data = dict()
-        
+
         # Get data from decisions
         if self.decisions_enabled:
             self.command = DECISIONS_CMD
             raw = self._get_raw_data()
             raw = (''.join(raw)).replace("\n", "")
             parsed_json = loads(raw)
-            if parsed_json != None:    
+            if parsed_json != None:
                 for event in parsed_json:
                     # By ip
                     dimension_key = event['source']['ip']
@@ -178,6 +178,62 @@ class Service(ExecutableService):
                         data[prefixed_dimension_key] += 1
                     else:
                         data[prefixed_dimension_key] = 1
+            else:
+                self.create_chart(
+                    "decisions_IP",
+                    [[
+                        "decisions_ip_none",
+                        "None"
+                    ]],
+                    "Active Decisions by ip",
+                    "ip",
+                    "Decisions",
+                    "crowdsec.decisions_IP",
+                    chart_type='stacked'
+                )
+                data["decisions_ip_none"] = 0
+
+                self.create_chart(
+                    "decisions_AS",
+                    [[
+                        "decisions_as_none",
+                        "None"
+                    ]],
+                    "Active Decisions by AS",
+                    "AS",
+                    "Decisions",
+                    "crowdsec.decisions_AS",
+                    chart_type='stacked'
+                )
+                data["decisions_as_none"] = 0
+
+                self.create_chart(
+                    "decisions_country",
+                    [[
+                        "decisions_country_none",
+                        "None"
+                    ]],
+                    "Active Decisions by Country",
+                    "Country",
+                    "Decisions",
+                    "crowdsec.decisions_country",
+                    chart_type='stacked'
+                )
+                data["decisions_country_none"] = 0
+
+                self.create_chart(
+                    "decisions_scenario",
+                    [[
+                        "decisions_scenario_none",
+                        "None"
+                    ]],
+                    "Active Decisions by Scenario",
+                    "scenario",
+                    "Decisions",
+                    "crowdsec.decisions_scenario",
+                    chart_type='stacked'
+                )
+                data["decisions_scenario_none"] = 0
 
         # Get data from metrics
         self.command = METRICS_CMD
@@ -212,7 +268,8 @@ class Service(ExecutableService):
 
         for i in range(len(parsed_json)):
             current = parsed_json[i]
-            if current == None: continue
+            if current == None:
+                continue
             if i == 0 and self.acquisition_enabled:
                 # File acquisition
                 for item_key in current:
