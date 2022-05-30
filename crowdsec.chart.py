@@ -119,8 +119,8 @@ class Service(ExecutableService):
                         data[prefixed_dimension_key] = 1
 
                     # By AS
-                    dimension_key = event['source']['as_name'] + \
-                        " - " + event['source']['as_number']
+                    dimension_key = (event['source']['as_name'] if "as_name" in event['source'] else "Unknown") + \
+                        " - " + (event['source']['as_number'] if "as_number" in event['source'] else "0")
                     prefixed_dimension_key = f"decisions_ip_{dimension_key.replace(' - ', '_')}"
                     self.create_chart(
                         "decisions_AS",
